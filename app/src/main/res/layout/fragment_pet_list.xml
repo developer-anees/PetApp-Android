@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/paddingCommon"
+    android:paddingTop="@dimen/paddingCommon"
+    android:paddingRight="@dimen/paddingCommon">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonChat"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginCommon"
+            android:layout_weight="1"
+            android:background="@drawable/chat_button_background"
+            android:text="@string/txt_chat"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/textSize"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/buttonCall"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginCommon"
+            android:layout_weight="1"
+            android:background="@drawable/call_button_background"
+            android:text="@string/txt_call"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/textSize"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvWorkingHours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marginCommon"
+        android:layout_marginRight="@dimen/marginCommon"
+        android:background="@drawable/textview_border"
+        android:gravity="center"
+        android:padding="@dimen/paddingCommon"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/textSize"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/listViewPets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marginCommon"
+        android:layout_marginTop="@dimen/marginCommon"
+        android:layout_marginRight="@dimen/marginCommon"
+        android:scrollbars="none" />
+
+    <TextView
+        android:id="@+id/tvEmptyText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" />
+
+</LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="listViewThumbImageWidth">60dp</dimen>
+    <dimen name="listViewThumbImageHeight">60dp</dimen>
+
+    <dimen name="paddingCommon">8dp</dimen>
+    <dimen name="paddingListItem">5dp</dimen>
+
+    <dimen name="marginCommon">8dp</dimen>
+
+    <dimen name="textSize">18sp</dimen>
+</resources>

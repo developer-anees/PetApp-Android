@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Pet Test</string>
+
+    <string name="txt_call">Call</string>
+    <string name="txt_chat">Chat</string>
+    <string name="within_work_hours">Thank you for getting in touch with us. We\'ll get back to you as soon as possible</string>
+    <string name="outside_work_hours">Work hours has ended. Please contact us again on the next work day</string>
+    <string name="dialog_title">Message</string>
+    <string name="ok">OK</string>
+    <string name="no_pet_info">Sorry no pet information available now!</string>
+    <string name="loading">Please wait..!</string>
+    <string name="no_network">No internet connection!, Please connect to network and try again!</string>
+</resources>
