@@ -5,7 +5,6 @@ package in.anees.petapp.model;
  * Created by Anees Thyrantakath on 2/16/19.
  */
 public class Pet {
-
     private String mContentUrl;
     private String mDateAdded;
     private String mImageUrl;

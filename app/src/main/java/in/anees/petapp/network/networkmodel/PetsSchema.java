@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 public class PetsSchema {
-
     @SerializedName("pets")
     private List<Pet> mPets;
 
@@ -17,5 +16,4 @@ public class PetsSchema {
     public void setPets(List<Pet> pets) {
         mPets = pets;
     }
-
 }

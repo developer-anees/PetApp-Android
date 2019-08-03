@@ -3,7 +3,6 @@ package in.anees.petapp.network.networkmodel;
 import com.google.gson.annotations.SerializedName;
 
 public class Pet {
-
     @SerializedName("content_url")
     private String mContentUrl;
     @SerializedName("date_added")
@@ -44,5 +43,4 @@ public class Pet {
     public void setTitle(String title) {
         mTitle = title;
     }
-
 }
