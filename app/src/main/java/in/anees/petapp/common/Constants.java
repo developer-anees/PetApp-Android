@@ -22,11 +22,6 @@ public class Constants {
     public static final String PARAM_SUCCESS_KEY = "success";
     public static final String PARAM_RESPONSE_KEY = "response";
 
-    public static final String BROADCAST_ACTION_SYNC_CURRENCY = "BROADCAST_ACTION_SYNC_CURRENCY";
-
-    public static final String UNIQUE_WORK_SYNC_PERIODIC = "sync_currency_job";
-    public static final int POLLING_INTERVAL_MINUTES = 30;
-
     public static final int CACHE_SIZE = 5 * 1024 * 1024;
     public static final String CACHE_DIR = "cachedir";
     public static final int MAX_STALE = 60 * 60 * 24 * 7; // Tolerate 7 days stale

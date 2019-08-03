@@ -12,12 +12,14 @@ import java.util.concurrent.Executors;
 import in.anees.petapp.common.Constants;
 import in.anees.petapp.network.api.PetAppApi;
 import in.anees.petapp.utils.NetworkUtils;
+
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -30,7 +32,6 @@ import static in.anees.petapp.common.Constants.MAX_STALE;
  * Created by Anees Thyrantakath on 2019-08-03.
  */
 public class PetAppNetworkService {
-
     private Retrofit mRetrofit;
     private Context mContext;
 

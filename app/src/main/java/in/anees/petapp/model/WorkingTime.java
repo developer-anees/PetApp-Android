@@ -6,7 +6,6 @@ import java.util.Date;
  * Created by Anees Thyrantakath on 2/16/19.
  */
 public class WorkingTime {
-
     private Date mOpeningTime;
     private Date mClosingTime;
 
