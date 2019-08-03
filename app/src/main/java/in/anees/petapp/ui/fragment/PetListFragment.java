@@ -2,30 +2,30 @@ package in.anees.petapp.ui.fragment;
 
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import in.anees.petapp.R;
-import in.anees.petapp.constant.Constants;
+import in.anees.petapp.controller.PetListController;
 import in.anees.petapp.model.Configuration;
 import in.anees.petapp.model.Pet;
-import in.anees.petapp.model.PetDetails;
 import in.anees.petapp.model.WorkingTime;
-import in.anees.petapp.network.JsonRequestAsyncTask;
-import in.anees.petapp.ui.adapter.PetListAdapter;
-import in.anees.petapp.ui.listeners.NetworkRequestResponseListener;
+import in.anees.petapp.ui.adapter.PetListRecyclerViewAdapter;
 import in.anees.petapp.utils.CommonAlert;
 import in.anees.petapp.utils.DateUtils;
 import in.anees.petapp.utils.NetworkUtils;
@@ -34,20 +34,19 @@ import in.anees.petapp.utils.NetworkUtils;
  * Created by Anees Thyrantakath on 2/16/19.
  * TODO: Not actively listening to network state change now.
  */
-public class PetListFragment extends BaseFragment implements NetworkRequestResponseListener, View.OnClickListener {
+public class PetListFragment extends BaseFragment
+        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener, PetListController.Listener {
 
-    public static String TAG_PET_LIST = "PET_LIST";
+    public static final String TAG = "PetListFragment";
 
     private Button mButtonChat, mButtonCall;
     private TextView mTvWorkingHours,tvEmptyText;
-    private ListView mPetsListView;
 
-    private PetDetails mPetDetails;
+    private List<Pet> mPetList = new ArrayList<>();
     private Configuration mConfiguration;
 
-    public PetListFragment() {
-        // Required empty public constructor
-    }
+    private PetListController mPetListController;
+    private PetListRecyclerViewAdapter mRecyclerViewAdapter;
 
     /**
      * Use this factory method to create a new instance of this fragment
@@ -58,6 +57,12 @@ public class PetListFragment extends BaseFragment implements NetworkRequestRespo
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.mPetListController = new PetListController(this);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_pet_list, container, false);
     }
@@ -65,35 +70,26 @@ public class PetListFragment extends BaseFragment implements NetworkRequestRespo
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mButtonChat = (Button) view.findViewById(R.id.buttonChat);
+        mButtonChat = view.findViewById(R.id.buttonChat);
         mButtonChat.setOnClickListener(this);
-        mButtonCall = (Button) view.findViewById(R.id.buttonCall);
+        mButtonCall = view.findViewById(R.id.buttonCall);
         mButtonCall.setOnClickListener(this);
 
-        mTvWorkingHours = (TextView) view.findViewById(R.id.tvWorkingHours);
-        mPetsListView = (ListView) view.findViewById(R.id.listViewPets);
-        tvEmptyText = (TextView) view.findViewById(R.id.tvEmptyText);
+        mTvWorkingHours = view.findViewById(R.id.tvWorkingHours);
+
+        RecyclerView petsListRecyclerView = view.findViewById(R.id.recyclerView);
+        mRecyclerViewAdapter = new PetListRecyclerViewAdapter(mPetList, this);
+        petsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        petsListRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+        tvEmptyText = view.findViewById(R.id.tvEmptyText);
         setEmptyTextViewToList(getString(R.string.loading));
-        mPetsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Pet pet = (Pet) mPetsListView.getItemAtPosition(position);
-                Log.i(TAG_PET_LIST, "Selected : " + pet.getTitle());
-                if (!NetworkUtils.isNetworkConnected(mContext)) {
-                    displayDialog(getString(R.string.no_network), false);
-                    return;
-                }
-                PetDetailsFragment petDetailsFragment
-                        = PetDetailsFragment.newInstance(pet.getTitle(), pet.getContentUrl());
-                mListener.addFragment(petDetailsFragment, false, PetDetailsFragment.TAG_PET_DETAILS);
-            }
-        });
 
         // Load if network is there
         if (NetworkUtils.isNetworkConnected(mContext)) {
-            Log.i(TAG_PET_LIST, "Network connected loading information!");
+            Log.i(TAG, "Network connected loading information!");
             // Handle situation if No network Dialog is displayed and then user activate mobile data and try
-            if (mConfiguration == null || mPetDetails == null) {
+            if (mConfiguration == null || mPetList == null) {
                 AlertDialogFragment fragment = isAlertDialogFragmentInBackStack();
                 if (fragment != null) {
                     boolean isOkToExit = fragment.getArguments().getBoolean(AlertDialogFragment.ARG_PARAM2);
@@ -107,14 +103,14 @@ public class PetListFragment extends BaseFragment implements NetworkRequestRespo
         // Check whether data is already exist if exist load and display.
         if (savedInstanceState != null) {
             if (mConfiguration!=null) {
-                onResponseSuccess(mConfiguration);
+                setSuccessConfiguration(mConfiguration);
             }
-            if (mPetDetails!=null) {
-                onResponseSuccess(mPetDetails);
+            if (mPetList != null) {
+                setPetListValuesSuccess(mPetList);
             }
 
             // If both are not null then it's okay not to show "No internet dialog"
-            if (mConfiguration != null && mPetDetails != null){
+            if (mConfiguration != null && mPetList != null){
                return;
             }
         }
@@ -129,7 +125,7 @@ public class PetListFragment extends BaseFragment implements NetworkRequestRespo
             isThisTheRightTime = DateUtils
                     .isWithinWorkingHours(new Date(), workingTime.getOpeningTime(), workingTime.getClosingTime());
         }
-        Log.i(TAG_PET_LIST, "Is pet shop opened? : " + isThisTheRightTime);
+        Log.i(TAG, "Is pet shop opened? : " + isThisTheRightTime);
         switch (v.getId()) {
             case R.id.buttonChat:
             case R.id.buttonCall:
@@ -139,70 +135,97 @@ public class PetListFragment extends BaseFragment implements NetworkRequestRespo
         }
     }
 
-    @Override
-    public void onResponseSuccess(Object object) {
-        Log.i(TAG_PET_LIST, "updateButtons Object : " + object.getClass().getName());
-        if (object instanceof Configuration) {
-            mConfiguration = (Configuration) object;
-
-            mButtonCall.setVisibility(mConfiguration.isIsCallEnabled() ? View.VISIBLE : View.GONE);
-            mButtonChat.setVisibility(mConfiguration.isIsChatEnabled() ? View.VISIBLE : View.GONE);
-            String workingHours = mConfiguration.getWorkHours();
-            if (!workingHours.isEmpty()) {
-                mTvWorkingHours.setVisibility(View.VISIBLE);
-                mTvWorkingHours.setText(workingHours);
-            }
-        } else if (object instanceof PetDetails) {
-            mPetDetails = (PetDetails) object;
-            ArrayList<Pet> listPetDetails = (ArrayList<Pet>) mPetDetails.getPets();
-            if (listPetDetails!=null && listPetDetails.size() == 0) {
-                setEmptyTextViewToList(getString(R.string.no_pet_info));
-            }
-            PetListAdapter customAdapter = new PetListAdapter(mContext, listPetDetails);
-            mPetsListView.setAdapter(customAdapter);
-        }
-    }
-
-    @Override
-    public void onResponseFailure(Object object) {
-        CommonAlert.showToast(mContext, "Failed to get response from server!");
-        Log.i(TAG_PET_LIST, "isNetworkConnected : " + NetworkUtils.isNetworkConnected(mContext));
-        Log.e(TAG_PET_LIST, "Something went wrong check the logcat logs and figure out!");
-        // In case list is empty modify the message
-        if (mPetDetails == null) {
-            setEmptyTextViewToList(getString(R.string.no_pet_info));
-        }
-    }
 
     private void loadInformation() {
         // Load config details
         if (mConfiguration != null) {
-            onResponseSuccess(mConfiguration);
+            setSuccessConfiguration(mConfiguration);
         } else {
-            new JsonRequestAsyncTask(this).execute(Constants.CONFIG_URL);
+            mPetListController.fetchConfiguration();
         }
         // Load pet information
-        if (mPetDetails != null) {
-            onResponseSuccess(mPetDetails);
+        if (mPetList != null && mPetList.size() > 0) {
+            setPetListValuesSuccess(mPetList);
         } else {
-            new JsonRequestAsyncTask(this).execute(Constants.PET_LIST_URL);
+            mPetListController.fetchPetList();
         }
     }
 
     private void setEmptyTextViewToList(String textToSet) {
+        tvEmptyText.setVisibility(View.VISIBLE);
         tvEmptyText.setText(textToSet);
-        mPetsListView.setEmptyView(tvEmptyText);
-    }
-    private AlertDialogFragment isAlertDialogFragmentInBackStack() {
-        return (AlertDialogFragment) getFragmentManager().findFragmentByTag(AlertDialogFragment.TAG_ALERT_DIALOG);
     }
 
-    private void displayDialog(String message, boolean isFinishApp) {
-        AlertDialogFragment fragment = isAlertDialogFragmentInBackStack();
-        if (fragment == null) {
-            AlertDialogFragment dialog = AlertDialogFragment.newInstance(message,isFinishApp);
-            dialog.setRetainInstance(true);
-            dialog.show(getFragmentManager(), AlertDialogFragment.TAG_ALERT_DIALOG);
-        }
+    @Override
+    public void setPetListValuesSuccess(final List<Pet> petList) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mPetList = petList;
+                tvEmptyText.setVisibility(View.GONE);
+                mRecyclerViewAdapter.setPetListToRecyclerView(mPetList);
+            }
+        });
+
+    }
+
+    @Override
+    public void setErrorWhileFetchingPetList(String errorMessage) {
+
+        // TODO : Retry by checking the root cause of failure
+        Log.e(TAG, "setErrorWhileFetchingPetList: " + errorMessage );
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                setEmptyTextViewToList(getString(R.string.no_pet_info));
+            }
+        });
+
+    }
+
+    @Override
+    public void setErrorFetchingConfiguration(final String errorMessage) {
+        // TODO : Retry by checking the root cause of failure
+        Log.e(TAG, "setErrorFetchingConfiguration: " + errorMessage );
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                CommonAlert.showToast(mContext, errorMessage);
+            }
+        });
+    }
+
+    @Override
+    public void setSuccessConfiguration(final Configuration configuration) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mConfiguration = configuration;
+                mButtonCall.setVisibility(mConfiguration.isIsCallEnabled() ? View.VISIBLE : View.GONE);
+                mButtonChat.setVisibility(mConfiguration.isIsChatEnabled() ? View.VISIBLE : View.GONE);
+                String workingHours = mConfiguration.getWorkHours();
+                if (!workingHours.isEmpty()) {
+                    mTvWorkingHours.setVisibility(View.VISIBLE);
+                    mTvWorkingHours.setText(workingHours);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onPetClick(final int position) {
+        Log.d(TAG, "onPetClick: " + mPetList.get(position).getTitle());
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (!NetworkUtils.isNetworkConnected(mContext)) {
+                    displayDialog(getString(R.string.no_network), false);
+                    return;
+                }
+                PetDetailsFragment petDetailsFragment = PetDetailsFragment
+                        .newInstance(mPetList.get(position).getTitle(), mPetList.get(position).getContentUrl());
+                mListener.addFragment(petDetailsFragment, false, PetDetailsFragment.TAG_PET_DETAILS);
+            }
+        });
     }
 }

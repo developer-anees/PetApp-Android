@@ -11,6 +11,13 @@ public class Pet {
     private String mImageUrl;
     private String mTitle;
 
+    public Pet(String mContentUrl, String mDateAdded, String mImageUrl, String mTitle) {
+        this.mContentUrl = mContentUrl;
+        this.mDateAdded = mDateAdded;
+        this.mImageUrl = mImageUrl;
+        this.mTitle = mTitle;
+    }
+
     public String getContentUrl() {
         return mContentUrl;
     }

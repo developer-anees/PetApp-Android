@@ -1,4 +1,4 @@
-package in.anees.petapp;
+package in.anees.petapp.common;
 
 import android.app.Application;
 import android.content.Context;

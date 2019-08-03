@@ -75,9 +75,9 @@ public class DateUtils {
         // Setting time to Today's date
         SimpleDateFormat df = new SimpleDateFormat("HH:mm");
         // SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.US);
-        Date d = df.parse(time);
+        Date date = df.parse(time);
         Calendar cal = Calendar.getInstance();
-        cal.setTime(d);
+        cal.setTime(date);
         cal.set(Calendar.YEAR, calendarToday.get(Calendar.YEAR));
         cal.set(Calendar.MONTH, calendarToday.get(Calendar.MONTH));
         cal.set(Calendar.DAY_OF_MONTH, calendarToday.get(Calendar.DAY_OF_MONTH));

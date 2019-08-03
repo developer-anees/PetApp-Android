@@ -1,4 +1,4 @@
-package in.anees.petapp;
+package in.anees.petapp.ui;
 
 import android.os.Bundle;
 
@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import in.anees.petapp.R;
 import in.anees.petapp.ui.fragment.PetListFragment;
 import in.anees.petapp.ui.listeners.FragmentListener;
 
@@ -20,9 +21,8 @@ public class MainActivity extends FragmentActivity implements FragmentListener {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            addFragment(PetListFragment.newInstance(), false, PetListFragment.TAG_PET_LIST);
+            addFragment(PetListFragment.newInstance(), false, PetListFragment.TAG);
         }
-
     }
 
     @Override

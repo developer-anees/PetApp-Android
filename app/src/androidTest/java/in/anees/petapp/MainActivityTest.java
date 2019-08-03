@@ -16,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import in.anees.petapp.ui.MainActivity;
 import in.anees.petapp.ui.fragment.AlertDialogFragment;
 import in.anees.petapp.ui.fragment.PetListFragment;
 import in.anees.petapp.utils.NetworkUtils;
