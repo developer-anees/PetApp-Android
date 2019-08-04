@@ -22,7 +22,7 @@
             android:background="@drawable/chat_button_background"
             android:text="@string/txt_chat"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/color_white"
             android:textSize="@dimen/textSize"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -37,7 +37,7 @@
             android:background="@drawable/call_button_background"
             android:text="@string/txt_call"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/color_white"
             android:textSize="@dimen/textSize"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -52,7 +52,7 @@
         android:background="@drawable/textview_border"
         android:gravity="center"
         android:padding="@dimen/paddingCommon"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/color_black"
         android:textSize="@dimen/textSize"
         android:visibility="gone" />
 
