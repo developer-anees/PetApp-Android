@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.FailureHandler;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -17,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import in.anees.petapp.ui.MainActivity;
+import in.anees.petapp.ui.adapter.PetListRecyclerViewAdapter;
 import in.anees.petapp.ui.fragment.AlertDialogFragment;
 import in.anees.petapp.ui.fragment.PetListFragment;
 import in.anees.petapp.utils.NetworkUtils;
@@ -60,9 +63,17 @@ public class MainActivityTest {
 
         if (NetworkUtils.isNetworkConnected(mMainActivity)) {
             Log.d(TAG, "Internet is connected!");
+            //Wait for sometime to load fragment and wait for network action
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                Log.e(TAG, "launchActivityTest: ", e);
+            }
+
             PetListFragment petListFragment = (PetListFragment) fragmentManager
-                    .findFragmentByTag(PetListFragment.TAG_PET_LIST);
+                    .findFragmentByTag(PetListFragment.TAG);
             Log.d(TAG, "PetListFragment instance is null? : " +(petListFragment == null));
+
 
             //Each button scenarios needs to be tested separately
 
@@ -98,7 +109,14 @@ public class MainActivityTest {
             onView(withId(R.id.tvWorkingHours)).check(matches((isDisplayed())));
 
             // Click on listView check if network present, and WebView displayed
-            onData(anything()).inAdapterView(withId(R.id.listViewPets)).atPosition(0).perform(click());
+//            onData(anything()).inAdapterView(withId(R.id.listViewPets)).atPosition(0).perform(click());
+//            if (NetworkUtils.isNetworkConnected(mMainActivity)) {
+//                onView(withId(R.id.webViewPetDetails)).check(matches((isDisplayed())));
+//            }
+            // Click on RecyclerView and check if network present, and WebView displayed
+            onView(withId(R.id.recyclerView))
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
             if (NetworkUtils.isNetworkConnected(mMainActivity)) {
                 onView(withId(R.id.webViewPetDetails)).check(matches((isDisplayed())));
             }
