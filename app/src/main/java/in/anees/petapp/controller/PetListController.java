@@ -21,20 +21,13 @@ import retrofit2.Response;
  * Created by Anees Thyrantakath on 2019-08-03.
  */
 public class PetListController {
-    public interface Listener {
-        void setSuccessConfiguration(Configuration configuration);
-        void setErrorFetchingConfiguration(String errorMessage);
-
-        void setPetListValuesSuccess(List<in.anees.petapp.model.Pet> petList);
-        void setErrorWhileFetchingPetList(String errorMessage);
-    }
 
     private PetAppNetworkService mPetAppNetworkService;
-    private PetListController.Listener mListener;
+    private PetListFragment mPetListFragment;
 
-    public PetListController(PetListFragment petListFragment) {
-        mListener = petListFragment;
-        mPetAppNetworkService = new PetAppNetworkService(petListFragment.getContext().getApplicationContext());
+    public PetListController(PetListFragment mPetListFragment) {
+        this.mPetListFragment = mPetListFragment;
+        mPetAppNetworkService = new PetAppNetworkService(mPetListFragment.getContext().getApplicationContext());
     }
 
     public void fetchPetList() {
@@ -56,7 +49,7 @@ public class PetListController {
     }
 
     private void notifyFetchPetListError(String errorMessage) {
-        mListener.setErrorWhileFetchingPetList(errorMessage);
+        mPetListFragment.setErrorWhileFetchingPetList(errorMessage);
 
     }
 
@@ -73,7 +66,7 @@ public class PetListController {
             ));
         }
 
-        mListener.setPetListValuesSuccess(petList);
+        mPetListFragment.setPetListValuesSuccess(petList);
     }
 
     public void fetchConfiguration() {
@@ -99,7 +92,7 @@ public class PetListController {
     }
 
     private void notifyConfigurationError(String errorMessage) {
-        mListener.setErrorFetchingConfiguration(errorMessage);
+        mPetListFragment.setErrorFetchingConfiguration(errorMessage);
     }
 
     private void notifyConfigurationSuccess(ConfigurationSchema configurationSchema) throws ParseException {
@@ -111,6 +104,6 @@ public class PetListController {
 
         );
 
-        mListener.setSuccessConfiguration(configuration);
+        mPetListFragment.setSuccessConfiguration(configuration);
     }
 }

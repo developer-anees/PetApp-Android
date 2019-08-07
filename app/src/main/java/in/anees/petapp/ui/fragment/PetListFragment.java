@@ -35,7 +35,7 @@ import in.anees.petapp.utils.NetworkUtils;
  * TODO: Not actively listening to network state change now.
  */
 public class PetListFragment extends BaseFragment
-        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener, PetListController.Listener {
+        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener {
 
     public static final String TAG = "PetListFragment";
 
@@ -156,7 +156,6 @@ public class PetListFragment extends BaseFragment
         tvEmptyText.setText(textToSet);
     }
 
-    @Override
     public void setPetListValuesSuccess(final List<Pet> petList) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
@@ -169,7 +168,6 @@ public class PetListFragment extends BaseFragment
 
     }
 
-    @Override
     public void setErrorWhileFetchingPetList(String errorMessage) {
 
         // TODO : Retry by checking the root cause of failure
@@ -183,7 +181,6 @@ public class PetListFragment extends BaseFragment
 
     }
 
-    @Override
     public void setErrorFetchingConfiguration(final String errorMessage) {
         // TODO : Retry by checking the root cause of failure
         Log.e(TAG, "setErrorFetchingConfiguration: " + errorMessage );
@@ -195,7 +192,6 @@ public class PetListFragment extends BaseFragment
         });
     }
 
-    @Override
     public void setSuccessConfiguration(final Configuration configuration) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
