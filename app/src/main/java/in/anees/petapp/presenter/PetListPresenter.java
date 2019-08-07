@@ -1,4 +1,4 @@
-package in.anees.petapp.controller;
+package in.anees.petapp.presenter;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ import retrofit2.Response;
 /**
  * Created by Anees Thyrantakath on 2019-08-03.
  */
-public class PetListController {
-    public interface Listener {
+public class PetListPresenter {
+    public interface PetListViewListener {
         void setSuccessConfiguration(Configuration configuration);
         void setErrorFetchingConfiguration(String errorMessage);
 
@@ -30,10 +30,10 @@ public class PetListController {
     }
 
     private PetAppNetworkService mPetAppNetworkService;
-    private PetListController.Listener mListener;
+    private PetListViewListener mPetListViewListener;
 
-    public PetListController(PetListFragment petListFragment) {
-        mListener = petListFragment;
+    public PetListPresenter(PetListFragment petListFragment) {
+        mPetListViewListener = petListFragment;
         mPetAppNetworkService = new PetAppNetworkService(petListFragment.getContext().getApplicationContext());
     }
 
@@ -56,7 +56,7 @@ public class PetListController {
     }
 
     private void notifyFetchPetListError(String errorMessage) {
-        mListener.setErrorWhileFetchingPetList(errorMessage);
+        mPetListViewListener.setErrorWhileFetchingPetList(errorMessage);
 
     }
 
@@ -73,7 +73,7 @@ public class PetListController {
             ));
         }
 
-        mListener.setPetListValuesSuccess(petList);
+        mPetListViewListener.setPetListValuesSuccess(petList);
     }
 
     public void fetchConfiguration() {
@@ -99,7 +99,7 @@ public class PetListController {
     }
 
     private void notifyConfigurationError(String errorMessage) {
-        mListener.setErrorFetchingConfiguration(errorMessage);
+        mPetListViewListener.setErrorFetchingConfiguration(errorMessage);
     }
 
     private void notifyConfigurationSuccess(ConfigurationSchema configurationSchema) throws ParseException {
@@ -111,6 +111,6 @@ public class PetListController {
 
         );
 
-        mListener.setSuccessConfiguration(configuration);
+        mPetListViewListener.setSuccessConfiguration(configuration);
     }
 }

@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import in.anees.petapp.R;
-import in.anees.petapp.controller.PetListController;
+import in.anees.petapp.presenter.PetListPresenter;
 import in.anees.petapp.model.Configuration;
 import in.anees.petapp.model.Pet;
 import in.anees.petapp.model.WorkingTime;
@@ -35,7 +35,7 @@ import in.anees.petapp.utils.NetworkUtils;
  * TODO: Not actively listening to network state change now.
  */
 public class PetListFragment extends BaseFragment
-        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener, PetListController.Listener {
+        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener, PetListPresenter.PetListViewListener {
 
     public static final String TAG = "PetListFragment";
 
@@ -45,7 +45,7 @@ public class PetListFragment extends BaseFragment
     private List<Pet> mPetList = new ArrayList<>();
     private Configuration mConfiguration;
 
-    private PetListController mPetListController;
+    private PetListPresenter mPetListPresenter;
     private PetListRecyclerViewAdapter mRecyclerViewAdapter;
 
     /**
@@ -59,7 +59,7 @@ public class PetListFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mPetListController = new PetListController(this);
+        this.mPetListPresenter = new PetListPresenter(this);
     }
 
     @Override
@@ -141,13 +141,13 @@ public class PetListFragment extends BaseFragment
         if (mConfiguration != null) {
             setSuccessConfiguration(mConfiguration);
         } else {
-            mPetListController.fetchConfiguration();
+            mPetListPresenter.fetchConfiguration();
         }
         // Load pet information
         if (mPetList != null && mPetList.size() > 0) {
             setPetListValuesSuccess(mPetList);
         } else {
-            mPetListController.fetchPetList();
+            mPetListPresenter.fetchPetList();
         }
     }
 
