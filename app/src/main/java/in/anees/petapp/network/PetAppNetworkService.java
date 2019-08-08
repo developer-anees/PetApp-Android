@@ -39,7 +39,6 @@ public class PetAppNetworkService {
         this.mContext = context;
     }
 
-
     public PetAppApi getPetAppApi() {
         return getRetrofit().create(PetAppApi.class);
     }

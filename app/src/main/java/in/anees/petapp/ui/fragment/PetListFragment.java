@@ -17,17 +17,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import in.anees.petapp.R;
+import in.anees.petapp.presenter.PetListContract;
 import in.anees.petapp.presenter.PetListPresenter;
 import in.anees.petapp.model.Configuration;
 import in.anees.petapp.model.Pet;
-import in.anees.petapp.model.WorkingTime;
 import in.anees.petapp.ui.adapter.PetListRecyclerViewAdapter;
 import in.anees.petapp.utils.CommonAlert;
-import in.anees.petapp.utils.DateUtils;
 import in.anees.petapp.utils.NetworkUtils;
 
 /**
@@ -35,12 +33,13 @@ import in.anees.petapp.utils.NetworkUtils;
  * TODO: Not actively listening to network state change now.
  */
 public class PetListFragment extends BaseFragment
-        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener, PetListPresenter.PetListViewListener {
+        implements View.OnClickListener, PetListRecyclerViewAdapter.OnPetListItemClickListener,
+        PetListContract.PetListMvpView {
 
     public static final String TAG = "PetListFragment";
 
     private Button mButtonChat, mButtonCall;
-    private TextView mTvWorkingHours,tvEmptyText;
+    private TextView mTvWorkingHours, tvEmptyText;
 
     private List<Pet> mPetList = new ArrayList<>();
     private Configuration mConfiguration;
@@ -50,6 +49,7 @@ public class PetListFragment extends BaseFragment
 
     /**
      * Use this factory method to create a new instance of this fragment
+     *
      * @return A new instance of fragment PetListFragment.
      */
     public static PetListFragment newInstance() {
@@ -102,7 +102,7 @@ public class PetListFragment extends BaseFragment
 
         // Check whether data is already exist if exist load and display.
         if (savedInstanceState != null) {
-            if (mConfiguration!=null) {
+            if (mConfiguration != null) {
                 setSuccessConfiguration(mConfiguration);
             }
             if (mPetList != null) {
@@ -110,8 +110,8 @@ public class PetListFragment extends BaseFragment
             }
 
             // If both are not null then it's okay not to show "No internet dialog"
-            if (mConfiguration != null && mPetList != null){
-               return;
+            if (mConfiguration != null && mPetList != null) {
+                return;
             }
         }
         displayDialog(getString(R.string.no_network), true);
@@ -119,41 +119,40 @@ public class PetListFragment extends BaseFragment
 
     @Override
     public void onClick(View v) {
-        boolean isThisTheRightTime = false;
-        if (mConfiguration != null) {
-            WorkingTime workingTime = mConfiguration.getWorkingTime();
-            isThisTheRightTime = DateUtils
-                    .isWithinWorkingHours(new Date(), workingTime.getOpeningTime(), workingTime.getClosingTime());
-        }
-        Log.i(TAG, "Is pet shop opened? : " + isThisTheRightTime);
         switch (v.getId()) {
             case R.id.buttonChat:
             case R.id.buttonCall:
-                displayDialog((isThisTheRightTime) ?
-                        getString(R.string.within_work_hours) : getString(R.string.outside_work_hours),false);
+                if (mConfiguration != null) {
+                    mPetListPresenter.handleCallOrChatButtonClick(mConfiguration);
+                }
                 break;
         }
     }
-
 
     private void loadInformation() {
         // Load config details
         if (mConfiguration != null) {
             setSuccessConfiguration(mConfiguration);
         } else {
-            mPetListPresenter.fetchConfiguration();
+            mPetListPresenter.handleFetchConfiguration();
         }
         // Load pet information
         if (mPetList != null && mPetList.size() > 0) {
             setPetListValuesSuccess(mPetList);
         } else {
-            mPetListPresenter.fetchPetList();
+            mPetListPresenter.handleFetchPetList();
         }
     }
 
     private void setEmptyTextViewToList(String textToSet) {
         tvEmptyText.setVisibility(View.VISIBLE);
         tvEmptyText.setText(textToSet);
+    }
+
+    @Override
+    public void displayAlertDialogWithMessage(boolean isThisTheRightTime, boolean isFinishOkToFinishApp) {
+        displayDialog((isThisTheRightTime) ?
+                getString(R.string.within_work_hours) : getString(R.string.outside_work_hours), isFinishOkToFinishApp);
     }
 
     @Override
@@ -166,27 +165,24 @@ public class PetListFragment extends BaseFragment
                 mRecyclerViewAdapter.setPetListToRecyclerView(mPetList);
             }
         });
-
     }
 
     @Override
     public void setErrorWhileFetchingPetList(String errorMessage) {
-
         // TODO : Retry by checking the root cause of failure
-        Log.e(TAG, "setErrorWhileFetchingPetList: " + errorMessage );
+        Log.e(TAG, "setErrorWhileFetchingPetList: " + errorMessage);
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 setEmptyTextViewToList(getString(R.string.no_pet_info));
             }
         });
-
     }
 
     @Override
     public void setErrorFetchingConfiguration(final String errorMessage) {
         // TODO : Retry by checking the root cause of failure
-        Log.e(TAG, "setErrorFetchingConfiguration: " + errorMessage );
+        Log.e(TAG, "setErrorFetchingConfiguration: " + errorMessage);
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -215,17 +211,12 @@ public class PetListFragment extends BaseFragment
     @Override
     public void onPetClick(final int position) {
         Log.d(TAG, "onPetClick: " + mPetList.get(position).getTitle());
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                if (!NetworkUtils.isNetworkConnected(mContext)) {
-                    displayDialog(getString(R.string.no_network), false);
-                    return;
-                }
-                PetDetailsFragment petDetailsFragment = PetDetailsFragment
-                        .newInstance(mPetList.get(position).getTitle(), mPetList.get(position).getContentUrl());
-                mListener.addFragment(petDetailsFragment, false, PetDetailsFragment.TAG_PET_DETAILS);
-            }
-        });
+        if (!NetworkUtils.isNetworkConnected(mContext)) {
+            displayDialog(getString(R.string.no_network), false);
+            return;
+        }
+        PetDetailsFragment petDetailsFragment = PetDetailsFragment
+                .newInstance(mPetList.get(position).getTitle(), mPetList.get(position).getContentUrl());
+        mListener.addFragment(petDetailsFragment, false, PetDetailsFragment.TAG_PET_DETAILS);
     }
 }

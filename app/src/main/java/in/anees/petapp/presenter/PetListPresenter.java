@@ -1,11 +1,15 @@
 package in.anees.petapp.presenter;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import in.anees.petapp.common.Constants;
 import in.anees.petapp.model.Configuration;
+import in.anees.petapp.model.WorkingTime;
 import in.anees.petapp.network.PetAppNetworkService;
 import in.anees.petapp.network.networkmodel.ConfigurationSchema;
 import in.anees.petapp.network.networkmodel.Pet;
@@ -20,24 +24,19 @@ import retrofit2.Response;
 /**
  * Created by Anees Thyrantakath on 2019-08-03.
  */
-public class PetListPresenter {
-    public interface PetListViewListener {
-        void setSuccessConfiguration(Configuration configuration);
-        void setErrorFetchingConfiguration(String errorMessage);
-
-        void setPetListValuesSuccess(List<in.anees.petapp.model.Pet> petList);
-        void setErrorWhileFetchingPetList(String errorMessage);
-    }
+public class PetListPresenter implements PetListContract.PetListMvpPresenter {
+    private static final String TAG = "PetListPresenter";
 
     private PetAppNetworkService mPetAppNetworkService;
-    private PetListViewListener mPetListViewListener;
+    private PetListContract.PetListMvpView mPetListMvpView;
 
     public PetListPresenter(PetListFragment petListFragment) {
-        mPetListViewListener = petListFragment;
+        mPetListMvpView = petListFragment;
         mPetAppNetworkService = new PetAppNetworkService(petListFragment.getContext().getApplicationContext());
     }
 
-    public void fetchPetList() {
+    @Override
+    public void handleFetchPetList() {
         mPetAppNetworkService.getPetAppApi().getPetList(Constants.PET_LIST_URL).enqueue(new Callback<PetsSchema>() {
             @Override
             public void onResponse(Call<PetsSchema> call, Response<PetsSchema> response) {
@@ -56,7 +55,7 @@ public class PetListPresenter {
     }
 
     private void notifyFetchPetListError(String errorMessage) {
-        mPetListViewListener.setErrorWhileFetchingPetList(errorMessage);
+        mPetListMvpView.setErrorWhileFetchingPetList(errorMessage);
 
     }
 
@@ -73,10 +72,11 @@ public class PetListPresenter {
             ));
         }
 
-        mPetListViewListener.setPetListValuesSuccess(petList);
+        mPetListMvpView.setPetListValuesSuccess(petList);
     }
 
-    public void fetchConfiguration() {
+    @Override
+    public void handleFetchConfiguration() {
         mPetAppNetworkService.getPetAppApi().getConfiguration(Constants.CONFIG_URL).enqueue(new Callback<ConfigurationSchema>() {
             @Override
             public void onResponse(Call<ConfigurationSchema> call, Response<ConfigurationSchema> response) {
@@ -98,8 +98,20 @@ public class PetListPresenter {
         });
     }
 
+    @Override
+    public void handleCallOrChatButtonClick(Configuration configuration) {
+        boolean isThisTheRightTime = false;
+        if (configuration != null) {
+            WorkingTime workingTime = configuration.getWorkingTime();
+            isThisTheRightTime = DateUtils
+                    .isWithinWorkingHours(new Date(), workingTime.getOpeningTime(), workingTime.getClosingTime());
+        }
+        Log.i(TAG, "Is pet shop opened? : " + isThisTheRightTime);
+        mPetListMvpView.displayAlertDialogWithMessage(isThisTheRightTime, false);
+    }
+
     private void notifyConfigurationError(String errorMessage) {
-        mPetListViewListener.setErrorFetchingConfiguration(errorMessage);
+        mPetListMvpView.setErrorFetchingConfiguration(errorMessage);
     }
 
     private void notifyConfigurationSuccess(ConfigurationSchema configurationSchema) throws ParseException {
@@ -111,6 +123,7 @@ public class PetListPresenter {
 
         );
 
-        mPetListViewListener.setSuccessConfiguration(configuration);
+        mPetListMvpView.setSuccessConfiguration(configuration);
     }
+
 }
