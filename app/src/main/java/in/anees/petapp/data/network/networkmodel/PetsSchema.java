@@ -1,5 +1,5 @@
 
-package in.anees.petapp.network.networkmodel;
+package in.anees.petapp.data.network.networkmodel;
 
 import java.util.List;
 

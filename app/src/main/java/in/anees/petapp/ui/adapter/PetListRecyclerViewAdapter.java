@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import in.anees.petapp.R;
-import in.anees.petapp.model.Pet;
+import in.anees.petapp.data.model.Pet;
 
 /**
  * Created by Anees Thyrantakath on 2/16/19.

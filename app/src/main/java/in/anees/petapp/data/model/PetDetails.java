@@ -1,5 +1,5 @@
 
-package in.anees.petapp.model;
+package in.anees.petapp.data.model;
 
 import java.util.List;
 

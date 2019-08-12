@@ -1,7 +1,7 @@
-package in.anees.petapp.network.api;
+package in.anees.petapp.data.network.api;
 
-import in.anees.petapp.network.networkmodel.ConfigurationSchema;
-import in.anees.petapp.network.networkmodel.PetsSchema;
+import in.anees.petapp.data.network.networkmodel.ConfigurationSchema;
+import in.anees.petapp.data.network.networkmodel.PetsSchema;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
