@@ -2,8 +2,8 @@ package in.anees.petapp.presenter;
 
 import java.util.List;
 
-import in.anees.petapp.model.Configuration;
-import in.anees.petapp.model.Pet;
+import in.anees.petapp.data.model.Configuration;
+import in.anees.petapp.data.model.Pet;
 
 /**
  * Created by Anees Thyrantakath on 2019-08-07.

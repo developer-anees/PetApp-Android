@@ -1,4 +1,4 @@
-package in.anees.petapp.network;
+package in.anees.petapp.data.network;
 
 import android.content.Context;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 
 import in.anees.petapp.common.Constants;
-import in.anees.petapp.network.api.PetAppApi;
+import in.anees.petapp.data.network.api.PetAppApi;
 import in.anees.petapp.utils.NetworkUtils;
 
 import okhttp3.Cache;

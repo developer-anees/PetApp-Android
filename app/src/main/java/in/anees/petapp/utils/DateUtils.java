@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import in.anees.petapp.model.WorkingTime;
+import in.anees.petapp.data.model.WorkingTime;
 
 /**
  * Created by Anees Thyrantakath on 2/16/19.

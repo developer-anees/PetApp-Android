@@ -8,13 +8,12 @@ import java.util.Date;
 import java.util.List;
 
 import in.anees.petapp.common.Constants;
-import in.anees.petapp.model.Configuration;
-import in.anees.petapp.model.WorkingTime;
-import in.anees.petapp.network.PetAppNetworkService;
-import in.anees.petapp.network.networkmodel.ConfigurationSchema;
-import in.anees.petapp.network.networkmodel.Pet;
-import in.anees.petapp.network.networkmodel.PetsSchema;
-import in.anees.petapp.ui.fragment.PetListFragment;
+import in.anees.petapp.data.model.Configuration;
+import in.anees.petapp.data.model.WorkingTime;
+import in.anees.petapp.data.network.PetAppNetworkService;
+import in.anees.petapp.data.network.networkmodel.ConfigurationSchema;
+import in.anees.petapp.data.network.networkmodel.Pet;
+import in.anees.petapp.data.network.networkmodel.PetsSchema;
 import in.anees.petapp.utils.DateUtils;
 
 import retrofit2.Call;
@@ -30,9 +29,9 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
     private PetAppNetworkService mPetAppNetworkService;
     private PetListContract.PetListMvpView mPetListMvpView;
 
-    public PetListPresenter(PetListFragment petListFragment) {
-        mPetListMvpView = petListFragment;
-        mPetAppNetworkService = new PetAppNetworkService(petListFragment.getContext().getApplicationContext());
+    public PetListPresenter(PetListContract.PetListMvpView petListMvpView, PetAppNetworkService petAppNetworkService) {
+        mPetListMvpView = petListMvpView;
+        mPetAppNetworkService = petAppNetworkService;
     }
 
     @Override
@@ -61,10 +60,10 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
 
     private void notifyFetchPetListSuccess(PetsSchema petsSchema) {
         List<Pet> petsInSchema = petsSchema.getPets();
-        List<in.anees.petapp.model.Pet> petList = new ArrayList<>();
+        List<in.anees.petapp.data.model.Pet> petList = new ArrayList<>();
 
         for (Pet pet : petsInSchema) {
-            petList.add(new in.anees.petapp.model.Pet(
+            petList.add(new in.anees.petapp.data.model.Pet(
                     pet.getContentUrl(),
                     pet.getDateAdded(),
                     pet.getImageUrl(),

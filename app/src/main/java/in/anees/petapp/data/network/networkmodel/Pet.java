@@ -1,4 +1,4 @@
-package in.anees.petapp.network.networkmodel;
+package in.anees.petapp.data.network.networkmodel;
 
 import com.google.gson.annotations.SerializedName;
 

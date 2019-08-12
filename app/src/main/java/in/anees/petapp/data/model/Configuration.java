@@ -1,4 +1,4 @@
-package in.anees.petapp.model;
+package in.anees.petapp.data.model;
 
 /**
  * Created by Anees Thyrantakath on 2/16/19.

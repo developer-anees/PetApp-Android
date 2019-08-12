@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.anees.petapp.R;
+import in.anees.petapp.data.network.PetAppNetworkService;
 import in.anees.petapp.presenter.PetListContract;
 import in.anees.petapp.presenter.PetListPresenter;
-import in.anees.petapp.model.Configuration;
-import in.anees.petapp.model.Pet;
+import in.anees.petapp.data.model.Configuration;
+import in.anees.petapp.data.model.Pet;
 import in.anees.petapp.ui.adapter.PetListRecyclerViewAdapter;
 import in.anees.petapp.utils.CommonAlert;
 import in.anees.petapp.utils.NetworkUtils;
@@ -59,7 +60,7 @@ public class PetListFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mPetListPresenter = new PetListPresenter(this);
+        this.mPetListPresenter = new PetListPresenter(this, new PetAppNetworkService(mContext.getApplicationContext()));
     }
 
     @Override
