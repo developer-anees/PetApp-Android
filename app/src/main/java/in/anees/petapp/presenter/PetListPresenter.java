@@ -1,7 +1,5 @@
 package in.anees.petapp.presenter;
 
-import android.util.Log;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,7 +103,6 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
             isThisTheRightTime = DateUtils
                     .isWithinWorkingHours(new Date(), workingTime.getOpeningTime(), workingTime.getClosingTime());
         }
-        Log.i(TAG, "Is pet shop opened? : " + isThisTheRightTime);
         mPetListMvpView.displayAlertDialogWithMessage(isThisTheRightTime, false);
     }
 

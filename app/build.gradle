@@ -28,6 +28,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation('androidx.test:rules:1.1.0') {
         exclude module: 'annotation'
@@ -38,6 +39,7 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0') {
         exclude module: 'annotation'
     }
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
 
     // Retrofit and Gson converter
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

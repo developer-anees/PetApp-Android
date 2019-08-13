@@ -9,6 +9,9 @@ public class Configuration {
     private String mWorkHours;
     private WorkingTime mWorkingTime;
 
+    public Configuration() {
+    }
+
     public Configuration(boolean mIsChatEnabled, boolean mIsCallEnabled, String mWorkHours, WorkingTime mWorkingTime) {
         this.mIsChatEnabled = mIsChatEnabled;
         this.mIsCallEnabled = mIsCallEnabled;
