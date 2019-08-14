@@ -1,40 +1,51 @@
-package in.anees.petapp.presenter;
+package in.anees.petapp.viewmodel;
 
-import android.util.Log;
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import in.anees.petapp.common.Constants;
 import in.anees.petapp.data.model.Configuration;
-import in.anees.petapp.data.model.WorkingTime;
 import in.anees.petapp.data.network.PetAppNetworkService;
 import in.anees.petapp.data.network.networkmodel.ConfigurationSchema;
-import in.anees.petapp.data.network.networkmodel.Pet;
 import in.anees.petapp.data.network.networkmodel.PetsSchema;
+import in.anees.petapp.viewmodel.apiresponse.ConfigurationResponse;
+import in.anees.petapp.viewmodel.apiresponse.PetListResponse;
 import in.anees.petapp.utils.DateUtils;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by Anees Thyrantakath on 2019-08-03.
+ * Created by Anees Thyrantakath on 2019-08-14.
  */
-public class PetListPresenter implements PetListContract.PetListMvpPresenter {
-    private static final String TAG = "PetListPresenter";
+public class PetListViewModel extends AndroidViewModel {
+    private MutableLiveData<PetListResponse> mPetList;
+    private MutableLiveData<ConfigurationResponse> mConfiguration;
 
     private PetAppNetworkService mPetAppNetworkService;
-    private PetListContract.PetListMvpView mPetListMvpView;
 
-    public PetListPresenter(PetListContract.PetListMvpView petListMvpView, PetAppNetworkService petAppNetworkService) {
-        mPetListMvpView = petListMvpView;
-        mPetAppNetworkService = petAppNetworkService;
+
+    public PetListViewModel(@NonNull Application application) {
+        super(application);
+        mPetAppNetworkService = new PetAppNetworkService(application);
     }
 
-    @Override
+    public LiveData<PetListResponse> getPets() {
+        if (mPetList == null) {
+            mPetList = new MutableLiveData<PetListResponse>();
+            handleFetchPetList();
+        }
+        return mPetList;
+    }
+
     public void handleFetchPetList() {
         mPetAppNetworkService.getPetAppApi().getPetList(Constants.PET_LIST_URL).enqueue(new Callback<PetsSchema>() {
             @Override
@@ -54,15 +65,15 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
     }
 
     private void notifyFetchPetListError(String errorMessage) {
-        mPetListMvpView.setErrorWhileFetchingPetList(errorMessage);
+        mPetList.setValue(new PetListResponse(errorMessage));
 
     }
 
     private void notifyFetchPetListSuccess(PetsSchema petsSchema) {
-        List<Pet> petsInSchema = petsSchema.getPets();
+        List<in.anees.petapp.data.network.networkmodel.Pet> petsInSchema = petsSchema.getPets();
         List<in.anees.petapp.data.model.Pet> petList = new ArrayList<>();
 
-        for (Pet pet : petsInSchema) {
+        for (in.anees.petapp.data.network.networkmodel.Pet pet : petsInSchema) {
             petList.add(new in.anees.petapp.data.model.Pet(
                     pet.getContentUrl(),
                     pet.getDateAdded(),
@@ -70,12 +81,18 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
                     pet.getTitle()
             ));
         }
-
-        mPetListMvpView.setPetListValuesSuccess(petList);
+       mPetList.postValue(new PetListResponse(petList));
     }
 
-    @Override
-    public void handleFetchConfiguration() {
+    public LiveData<ConfigurationResponse> getConfiguration() {
+        if (mConfiguration == null) {
+            mConfiguration = new MutableLiveData<ConfigurationResponse>();
+            handleFetchConfiguration();
+        }
+        return mConfiguration;
+    }
+
+    private void handleFetchConfiguration() {
         mPetAppNetworkService.getPetAppApi().getConfiguration(Constants.CONFIG_URL).enqueue(new Callback<ConfigurationSchema>() {
             @Override
             public void onResponse(Call<ConfigurationSchema> call, Response<ConfigurationSchema> response) {
@@ -97,20 +114,8 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
         });
     }
 
-    @Override
-    public void handleCallOrChatButtonClick(Configuration configuration) {
-        boolean isThisTheRightTime = false;
-        if (configuration != null) {
-            WorkingTime workingTime = configuration.getWorkingTime();
-            isThisTheRightTime = DateUtils
-                    .isWithinWorkingHours(new Date(), workingTime.getOpeningTime(), workingTime.getClosingTime());
-        }
-        Log.i(TAG, "Is pet shop opened? : " + isThisTheRightTime);
-        mPetListMvpView.displayAlertDialogWithMessage(isThisTheRightTime, false);
-    }
-
     private void notifyConfigurationError(String errorMessage) {
-        mPetListMvpView.setErrorFetchingConfiguration(errorMessage);
+        mConfiguration.setValue(new ConfigurationResponse(errorMessage));
     }
 
     private void notifyConfigurationSuccess(ConfigurationSchema configurationSchema) throws ParseException {
@@ -121,8 +126,6 @@ public class PetListPresenter implements PetListContract.PetListMvpPresenter {
                 DateUtils.getWorkingTimings(configurationSchema.getSettings().getWorkHours())
 
         );
-
-        mPetListMvpView.setSuccessConfiguration(configuration);
+        mConfiguration.postValue(new ConfigurationResponse(configuration));
     }
-
 }

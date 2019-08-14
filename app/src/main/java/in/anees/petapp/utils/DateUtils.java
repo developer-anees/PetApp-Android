@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import in.anees.petapp.data.model.Configuration;
 import in.anees.petapp.data.model.WorkingTime;
 
 /**
@@ -83,5 +84,14 @@ public class DateUtils {
         cal.set(Calendar.DAY_OF_MONTH, calendarToday.get(Calendar.DAY_OF_MONTH));
 
         return cal.getTime();
+    }
+
+    public static boolean isThisTheRightTime(Date dateToday, Configuration configuration) {
+        boolean isThisTheRightTime = false;
+        if (configuration != null) {
+            WorkingTime workingTime = configuration.getWorkingTime();
+            isThisTheRightTime = isWithinWorkingHours(dateToday, workingTime.getOpeningTime(), workingTime.getClosingTime());
+        }
+        return isThisTheRightTime;
     }
 }
