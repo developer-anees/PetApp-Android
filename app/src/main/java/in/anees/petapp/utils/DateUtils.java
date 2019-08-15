@@ -44,20 +44,31 @@ public class DateUtils {
      * @return WorkingTime Object.
      */
     public static WorkingTime getWorkingTimings(String workHours) throws ParseException {
+        final String TIME24HOURS_REGEX = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
         final Pattern pattern = Pattern.compile("(\\d*\\d:\\d\\d)");
+        final Pattern pattern24HourFormat = Pattern.compile(TIME24HOURS_REGEX);
         final Matcher matcher = pattern.matcher(workHours);
         ArrayList<String> timingList = new ArrayList<>(2);
         while (matcher.find()) {
+            String time = matcher.group();
+            if (!pattern24HourFormat.matcher(time).matches()){
+                throw new RuntimeException("Something wrong with time syntax");
+            }
             timingList.add(matcher.group());
         }
 
         //We expect it will have only two values
         if (timingList.size() == 2) {
             WorkingTime workingTime = new WorkingTime();
-            workingTime.setOpeningTime(convertTimeToPresentDate(timingList.get(0)))
-                    .setClosingTime(convertTimeToPresentDate(timingList.get(1)));
-
-            return workingTime;
+            Date openingTime = convertTimeToPresentDate(timingList.get(0));
+            Date closingTime = convertTimeToPresentDate(timingList.get(1));
+            // Confirm opening time is less than closing time
+            workingTime.setOpeningTime(openingTime).setClosingTime(closingTime);
+            if (openingTime.before(closingTime)) {
+                return workingTime;
+            }
+            throw new RuntimeException("Opening time " + openingTime.toString()
+                    + " is not before Closing time " + closingTime.toString());
         }
         throw new RuntimeException("Wrong work hour syntax :" + workHours);
     }

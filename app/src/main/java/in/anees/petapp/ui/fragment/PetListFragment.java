@@ -24,6 +24,7 @@ import in.anees.petapp.R;
 import in.anees.petapp.data.model.Configuration;
 import in.anees.petapp.data.model.Pet;
 import in.anees.petapp.viewmodel.PetListViewModel;
+import in.anees.petapp.viewmodel.apiresponse.BaseResponse;
 import in.anees.petapp.viewmodel.apiresponse.ConfigurationResponse;
 import in.anees.petapp.viewmodel.apiresponse.PetListResponse;
 import in.anees.petapp.ui.adapter.PetListRecyclerViewAdapter;
@@ -100,12 +101,12 @@ public class PetListFragment extends BaseFragment
         model.getPets().observe(this, new Observer<PetListResponse>() {
             @Override
             public void onChanged(PetListResponse petListResponse) {
-                if (petListResponse == null) {
-                    CommonAlert.showToast(mContext, "Pet list returned empty");
-                } else if (petListResponse.getPetList() != null) {
-                    setPetListValuesSuccess(petListResponse.getPetList());
-                } else if (petListResponse.getMessage() != null) {
-                    setErrorWhileFetchingPetList(petListResponse.getMessage());
+                if (petListResponse.getCurrentState() == BaseResponse.State.LOADING) {
+                    Log.i(TAG, "onChanged: Loading pet list...!");
+                } else if (petListResponse.getCurrentState() == BaseResponse.State.SUCCESS) {
+                    setPetListValuesSuccess(petListResponse.getData());
+                } else if (petListResponse.getCurrentState() == BaseResponse.State.FAILED) {
+                    setErrorWhileFetchingPetList(petListResponse.getError());
                 } else {
                     Log.e(TAG, "onChanged: FetchPetList normally it was not suppose to happen");
                 }
@@ -115,12 +116,12 @@ public class PetListFragment extends BaseFragment
         model.getConfiguration().observe(this, new Observer<ConfigurationResponse>() {
             @Override
             public void onChanged(ConfigurationResponse configurationResponse) {
-                if (configurationResponse == null) {
-                    CommonAlert.showToast(mContext, "Configuration returned empty");
-                } else if (configurationResponse.getConfiguration() != null) {
-                    setSuccessConfiguration(configurationResponse.getConfiguration());
-                } else if (configurationResponse.getMessage() != null) {
-                    setErrorFetchingConfiguration(configurationResponse.getMessage());
+                if (configurationResponse.getCurrentState() == BaseResponse.State.LOADING) {
+                    Log.i(TAG, "onChanged: Loading configuration...!");
+                } else if (configurationResponse.getCurrentState() == BaseResponse.State.SUCCESS) {
+                    setSuccessConfiguration(configurationResponse.getData());
+                } else if (configurationResponse.getCurrentState() == BaseResponse.State.FAILED) {
+                    setErrorFetchingConfiguration(configurationResponse.getError());
                 } else {
                     Log.e(TAG, "onChanged: configuration normally it was not suppose to happen");
                 }
