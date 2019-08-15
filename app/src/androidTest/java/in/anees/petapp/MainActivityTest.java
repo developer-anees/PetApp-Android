@@ -63,6 +63,11 @@ public class MainActivityTest {
             //Wait for sometime to load fragment and wait for network action
             // TODO: Sleep is not a good approach instead you can use
             //  'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             PetListFragment petListFragment = (PetListFragment) fragmentManager
                     .findFragmentByTag(PetListFragment.TAG);
