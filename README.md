@@ -1,35 +1,27 @@
 # PetApp-Android
- Exercise to get hands on refactoring apps with architecture.
- I will try to write rough unit-test and instrumentation test aswell part of implementation.
- I won't be following TDD development, instead i will be implementing feature first then I'll write
- testing code, so I may create seperate branches for that aswell.
+**Master branch code is Legacy code**, and it's been roughly **refactored in MVC, MVP and MVVM**.
+Main focus is to write some Testing code, feel free to use code if you found it's helpful.
  
- # Aim
+ # [refactor-to-mvc branch](https://github.com/developer-anees/PetApp-Android/tree/refactor-to-mvc)
+ Legacy code is roughly modified into MVC pattern.
  
- The code in master branch is written in legacy way. Now I'm thinking to re-write the code in following ways.
- 
- # refactor-to-mvc
- 
- This could help me to test the part of code unit testable and Decouple UI and business logic.
- In this code I will be get rid of legacy way of network calls and try to use third-party libraries
- (retrofit, Glide), etc.
- 
- Test related above code can be find in respective branches.
- # refactored-mvc-unit-test-and-instrumentation-test
+ # [refactored-mvc-unit-test-and-instrumentation-test](https://github.com/developer-anees/PetApp-Android/tree/refactored-mvc-unit-test-and-instrumentation-test)
+ Implemented tests based on MVC code, after writing unit-test based on the result some logic also has been re-written.
   
- # refactor-to-mvp
+ # [refactor-to-mvp](https://github.com/developer-anees/PetApp-Android/tree/refactor-to-mvp)
+ Refactored code to MVP pattern.
  
-  Refactoring the same code in MVP pattern.
- 
-  Test related above code can be find in respective branches.
- # refactored-mvp-unit-test-and-instrumentation-test
+ # [refactored-mvp-unit-test-and-instrumentation-test](https://github.com/developer-anees/PetApp-Android/tree/refactored-mvp-unit-test-and-instrumentation-test)
+ Implemented unit-test for testing view(interface).
 
- # refactor-to-mvvm
+ # [refactor-to-mvvm](https://github.com/developer-anees/PetApp-Android/tree/refactor-to-mvvm)
+ Refactored code to MVVM.
  
- In this code base I will be using Android Jetpack components and Data Binding features aswell. 
- I have also added better cache management using Room database.
+ #[refactored-mvvm-unit-test-and-instrumentation-test](https://github.com/developer-anees/PetApp-Android/tree/refactored-mvvm-unit-test-and-instrumentation-test)
+ Implemented unit-test for view model.
  
-Feel free to use this code.
-I know the code might not be perfect. If you feel I could have improved code better then please give me suggestions!
 
-Thank you!
+This code is not perfect. Mainly focused on unit-test in various patterns
+If you find this code helpful, feel free to use. 
+
+Thank you!😊🙏
