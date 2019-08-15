@@ -1,5 +1,8 @@
 package in.anees.petapp.viewmodel.apiresponse;
 
+import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import in.anees.petapp.data.model.Pet;
@@ -7,33 +10,15 @@ import in.anees.petapp.data.model.Pet;
 /**
  * Created by Anees Thyrantakath on 2019-08-14.
  */
-public class PetListResponse {
-    public List<Pet> petList;
-    private String message;
+public class PetListResponse extends BaseResponse<List<Pet>> {
 
-    public PetListResponse(List<Pet> pets) {
-        this.petList = pets;
-        this.message = null;
+    public PetListResponse(State state,@Nullable List<Pet> pets,@Nullable String error) {
+        this.currentState = state;
+        this.data = pets;
+        this.error = null;
     }
 
-    public PetListResponse(String error) {
-        this.message = error;
-        this.petList = null;
-    }
-
-    public List<Pet> getPetList() {
-        return petList;
-    }
-
-    public void setPetList(List<Pet> petList) {
-        this.petList = petList;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    public static PetListResponse ERROR_STATE = new PetListResponse( State.FAILED, null, "");
+    public static PetListResponse LOADING_STATE = new PetListResponse( State.LOADING, null, null);
+    public static PetListResponse SUCCESS_STATE = new PetListResponse( State.SUCCESS, new ArrayList<Pet>(), null);
 }

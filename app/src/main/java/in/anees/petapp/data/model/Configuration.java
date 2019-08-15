@@ -16,6 +16,9 @@ public class Configuration {
         this.mWorkingTime = mWorkingTime;
     }
 
+    public Configuration() {
+    }
+
     public boolean isIsChatEnabled() {
         return mIsChatEnabled;
     }
