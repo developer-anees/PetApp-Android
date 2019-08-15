@@ -1,5 +1,7 @@
 # PetApp-Android 
  
- ### refactor-to-mvp
- Refactored legacy code roughly in MVP architecture. So that I can demonstrate how basically View is tested in MVP architecture through ***refactored-mvp-unit-test-and-instrumentation-test*** branch.
+ ### refactor-to-mvvm
+ Refactored legacy code to MVVM architecture.
+ Code is not so perfect, main motivation behind this approach is to implement few tests.
+ Implemented few test case including testing view model in  ***refactored-mvvm-unit-test-and-instrumentation-test*** branch.
  
